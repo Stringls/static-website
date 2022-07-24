@@ -9,7 +9,7 @@ variable "main_origin_id" {
 }
 
 variable "custom_origin_protocol_policy" {
-  type = string
+  type        = string
   description = "The origin protocol policy to apply to your origin. One of [http-only, https-only, match-viewer]"
 }
 
