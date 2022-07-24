@@ -10,6 +10,7 @@ on:
 env:
   TF_DIR: 'terraform'
   S3_BUCKET: 'tfstate-holder'
+  S3_BUCKET_KEY: 'tfstate'
   AWS_REGION: 'eu-central-1'
 
 jobs:
@@ -43,10 +44,11 @@ jobs:
     
     - name: Terraform Init
       id: init
-      run: terraform init \
-              -backend-config="bucket=${{ env.S3_BUCKET }}" \
-              -backend-config="key=${{ env.S3_BUCKET_KEY }}" \
-              -backend-config="region=${{ env.AWS_REGION }}"
+      run: |
+        terraform init \
+          -backend-config="bucket=${{ env.S3_BUCKET }}" \
+          -backend-config="key=${{ env.S3_BUCKET_KEY }}" \
+          -backend-config="region=${{ env.AWS_REGION }}"
       working-directory: ${{ env.TF_DIR }}
 
     - name: Terraform Validate
