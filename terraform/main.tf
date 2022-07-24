@@ -5,6 +5,8 @@ terraform {
       version = "4.23.0"
     }
   }
+
+  backend "s3" {}
 }
 
 provider "aws" {
@@ -56,7 +58,7 @@ module "cloudfront" {
   env      = local.env
   repo_url = local.repo_url
 
-  bucket_regional_domain_name    = module.bucket.bucket_website_endpoint
+  bucket_website_endpoint        = module.bucket.bucket_website_endpoint
   main_origin_id                 = random_string.main.result
   custom_origin_protocol_policy  = "https-only"
   enable_main_cloudfront         = true
@@ -69,4 +71,8 @@ module "cloudfront" {
   default_cache_compress         = true
   default_viewer_protocol_policy = "allow-all"
   cloudfront_default_certificate = true
+
+  depends_on = [
+    module.bucket
+  ]
 }
