@@ -113,7 +113,7 @@ jobs:
         -var="AWS_REGION=${{ env.AWS_REGION }}" \
         -var="AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
-        export $BUCKET_NAME=$(terraform output bucket_name)"
+        export $BUCKET_NAME=$(terraform output bucket_name)
       working-directory: ${{ env.TF_DIR }}
 
     #----------------------------
