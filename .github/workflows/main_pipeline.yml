@@ -29,6 +29,7 @@ jobs:
     - name: Create S3 bucket to store TF state
       working-directory: ${{ env.TF_DIR }}/script
       run: ./create_s3_for_backend.sh "${{ env.S3_BUCKET }}" "${{ env.AWS_REGION }}"
+      continue-on-error: true
 
     # ---------------------
     # TERRAFORM PART
