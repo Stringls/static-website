@@ -36,6 +36,8 @@ jobs:
     # TERRAFORM PART
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
 
     - name: Terraform fmt
       id: fmt
@@ -113,15 +115,14 @@ jobs:
         -var="AWS_REGION=${{ env.AWS_REGION }}" \
         -var="AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
-        export BUCKET_NAME=$(terraform output bucket_name)
-        echo $BUCKET_NAME
+        export BUCKET_NAME=$(terraform output bucket_name | tr -d '"')
       working-directory: ${{ env.TF_DIR }}
 
     #----------------------------
     # AWS CLI PART
     - name: Upload static files to S3 bucket created by Terraform
       run: |
-        aws s3 cp . s3://$(echo $BUCKET_NAME | tr -d '"')/ --recursive \
+        aws s3 cp . s3://$BUCKET_NAME/ --recursive \
           --exclude ".git/*" --exclude "README.MD" \
           --exclude "LICENSE.MD" --exclude "terraform/*" \
           --exclude ".gitignore" --exclude ".github/*"
