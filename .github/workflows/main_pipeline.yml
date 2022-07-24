@@ -115,15 +115,15 @@ jobs:
         -var="AWS_REGION=${{ env.AWS_REGION }}" \
         -var="AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
-        BUCKET_NAME=$(terraform output bucket_name | tr -d '"')
-        echo $BUCKET_NAME
+#        BUCKET_NAME=$(terraform output bucket_name | tr -d '"')
+#        echo $BUCKET_NAME
       working-directory: ${{ env.TF_DIR }}
 
     #----------------------------
     # AWS CLI PART
     - name: Upload static files to S3 bucket created by Terraform
       run: |
-        aws s3 cp . s3://$(echo $BUCKET_NAME)/ --recursive \
+        aws s3 cp . s3://$(terraform output bucket_name | tr -d '"')/ --recursive \
           --exclude ".git/*" --exclude "README.MD" \
           --exclude "LICENSE.MD" --exclude "terraform/*" \
           --exclude ".gitignore" --exclude ".github/*"
