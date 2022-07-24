@@ -114,6 +114,7 @@ jobs:
         -var="AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
         export BUCKET_NAME=$(terraform output bucket_name)
+        echo $BUCKET_NAME
       working-directory: ${{ env.TF_DIR }}
 
     #----------------------------
