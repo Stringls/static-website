@@ -50,7 +50,7 @@ jobs:
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
-      workding-directory: ${{ env.TF_DIR }}
+      working-directory: ${{ env.TF_DIR }}
     
     - name: Terraform Plan
       id: plan
