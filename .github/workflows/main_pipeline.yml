@@ -38,7 +38,7 @@ jobs:
 
     - name: Terraform fmt
       id: fmt
-      run: terrafor fmt -recursive
+      run: terraform fmt -recursive
       working-directory: ${{ env.TF_DIR }}
     
     - name: Terraform Init
