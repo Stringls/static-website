@@ -10,6 +10,7 @@ env:
   TF_DIR: 'terraform'
   S3_BUCKET: 'tfstate-holder'
   AWS_REGION: 'eu-central-1'
+  SCRIPT_DIR: '${{ env.TF_DIR }}/script'
 
 jobs:
   job:
