@@ -56,7 +56,7 @@ module "cloudfront" {
   env      = local.env
   repo_url = local.repo_url
 
-  bucket_regional_domain_name    = module.bucket.bucket_regional_domain_name
+  bucket_regional_domain_name    = module.bucket.bucket_website_endpoint
   main_origin_id                 = random_string.main.result
   custom_origin_protocol_policy  = "https-only"
   enable_main_cloudfront         = true

@@ -1,6 +1,6 @@
-variable "bucket_regional_domain_name" {
+variable "bucket_website_endpoint" {
   type        = string
-  description = "S3 bucket regional domain name"
+  description = "S3 bucket website endpoint"
 }
 
 variable "main_origin_id" {

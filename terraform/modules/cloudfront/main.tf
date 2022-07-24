@@ -1,6 +1,6 @@
 resource "aws_cloudfront_distribution" "main" {
   origin {
-    domain_name = var.bucket_regional_domain_name
+    domain_name = var.bucket_website_endpoint
     origin_id   = var.main_origin_id
 
     custom_origin_config {
