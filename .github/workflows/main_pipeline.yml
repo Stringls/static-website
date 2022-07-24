@@ -1,0 +1,118 @@
+name: Deploy static web site on AWS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  TF_DIR: 'terraform'
+  S3_BUCKET: 'tfstate-holder'
+  AWS_REGION: 'eu-central-1'
+
+jobs:
+  job:
+    runs-on: 'ubuntu-latest'
+    name: 'Terraform and uploading files'
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure AWS Creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Create S3 bucket to store TF state
+      working-directory: ${{ env.TF_DIR }}
+      run: ./create_s3_for_backend.sh "${{ env.S3_BUCKET }}" "{{ env.AWS_REGION }}"
+
+    # ---------------------
+    # TERRAFORM PART
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform fmt
+      id: fmt
+      run: terrafor fmt -recursive
+      working-directory: ${{ env.TF_DIR }}
+    
+    - name: Terraform Init
+      id: init
+      run: terraform init \
+              -backend-config="bucket=${{ env.S3_BUCKET }}" \
+              -backend-config="key=${{ env.S3_BUCKET_KEY }}" \
+              -backend-config="region=${{ env.AWS_REGION }}"
+      working-directory: ${{ env.TF_DIR }}
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+      workding-directory: ${{ env.TF_DIR }}
+    
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan -no-color
+      continue-on-error: true
+    
+    - uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          <details><summary>Validation Output</summary>
+
+          \`\`\`\n
+          ${{ steps.validate.outputs.stdout }}
+          \`\`\`
+
+          </details>
+
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          
+          <details><summary>Show Plan</summary>
+          
+          \`\`\`\n
+          ${process.env.PLAN}
+          \`\`\`
+          
+          </details>
+          
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.TF_DIR }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+    - name: Terraform Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
+    - name: Terraform Apply
+      id: apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        terraform apply -var="AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" -var="AWS_REGION=${{ env.AWS_REGION }}" -var="AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        export $BUCKET_NAME=$(terraform output bucket_name)"
+      working-directory: ${{ env.TF_DIR }}
+
+    #----------------------------
+    # AWS CLI PART
+    - name: Upload static files to S3 bucket created by Terraform
+      run: |
+        aws s3 cp . s3://$BUCKET_NAME/ --recursive \
+          --exclude ".git/*" --exclude "README.MD" \
+          --exclude "LICENSE.MD" --exclude "terraform/*" \
+          --exclude ".gitignore" --exclude ".github/*"
+        
+        echo "Files have been successfully uploaded to S3 Bucket"
