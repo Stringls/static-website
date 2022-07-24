@@ -1,3 +1,4 @@
+#trigger pipeline
 name: Deploy static web site on AWS
 
 on:
