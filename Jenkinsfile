@@ -23,12 +23,12 @@ pipeline {
     }
 
     stages {
-        stage('Create an S3 bucket for storing terraform state') {            
+        stage('Create an S3 bucket to store the terraform state') {            
             steps {
                 dir('${TF_DIR}/scripts') {
                     sh './create_s3_for_backend.sh "${S3_BUCKET}" "$AWS_REGION"'
                 }
-                catchError {}
+                // catchError {}
             }
         }
 
@@ -58,7 +58,7 @@ pipeline {
             }
         }
 
-        stage('Upload static files to S3 bucket') {
+        stage('Upload the static files to S3 bucket') {
             steps {
                 dir('${TF_DIR}/scripts') {
                     sh './upload_files.sh "${terraform.bucket_name}"'
@@ -67,5 +67,4 @@ pipeline {
             }
         }
     }
-
 }
