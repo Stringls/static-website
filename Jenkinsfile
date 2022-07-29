@@ -43,15 +43,12 @@ pipeline {
                 dir('${TF_DIR}') {
                     sh '''
                         terraform fmt -recursive
-
                         terraform init \
                             -backend-config="bucket=${S3_BUCKET}" \
                             -backend-config="key=${S3_BUCKET_KEY}" \
                             -backend-config="region=$AWS_REGION"
-                        
+                            
                         terraform validate -no-color
-                        terraform plan -no-color
-
                         terraform apply -input=false -auto-approve \
                             -var="AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
                             -var="AWS_REGION=$AWS_REGION" \
