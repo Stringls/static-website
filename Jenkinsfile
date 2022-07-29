@@ -1,3 +1,6 @@
+// Define variable
+def BUCKET_NAME
+
 pipeline {
     agent { 
         docker { 
