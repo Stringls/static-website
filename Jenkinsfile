@@ -28,7 +28,7 @@ pipeline {
                 dir('${TF_DIR}/scripts') {
                     sh './create_s3_for_backend.sh "${S3_BUCKET}" "$AWS_REGION"'
                 }
-                catchError(buildResult: 'FAILURE', stageResult: 'SUCCESS') {}
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {}
             }
         }
 
