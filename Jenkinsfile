@@ -25,13 +25,15 @@ pipeline {
     stages {
         stage('Create an S3 bucket to store the terraform state') {            
             steps {
-                try {
-                    dir('${TF_DIR}/scripts') {
-                        sh './create_s3_for_backend.sh "${S3_BUCKET}" "$AWS_REGION"'
+                script {
+                    try {
+                        dir('${TF_DIR}/scripts') {
+                            sh './create_s3_for_backend.sh "${S3_BUCKET}" "$AWS_REGION"'
+                        }
+                    } catch (err) {
+                        echo "Caught: ${err}"
+                        currentBuild.result = 'FAILED'
                     }
-                } catch (err) {
-                    echo "Caught: ${err}"
-                    currentBuild.result = 'FAILED'
                 }
             }
         }
