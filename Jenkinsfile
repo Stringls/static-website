@@ -29,7 +29,8 @@ pipeline {
                     dir('${TF_DIR}/scripts') {
                         sh './create_s3_for_backend.sh "${S3_BUCKET}" "$AWS_REGION"'
                     }
-                } catch {
+                }
+                catch {
                     echo 'The bucket is already created'
                     currentBuild.result = 'FAILED'
                 }
