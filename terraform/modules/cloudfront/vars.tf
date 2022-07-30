@@ -18,6 +18,11 @@ variable "enable_main_cloudfront" {
   description = "Whether the distribution is enabled to accept end user requests for content"
 }
 
+variable "is_ipv6_enabled" {
+  type = bool
+  description = "Whether the IPv6 is enabled for the distribution"
+}
+
 variable "default_query_string" {
   type        = bool
   description = "Query string forwarding for a default origin"
