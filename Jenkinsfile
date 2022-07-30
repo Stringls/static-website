@@ -54,9 +54,11 @@ pipeline {
                             -var="AWS_REGION=$AWS_REGION" \
                             -var="AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
                     '''
-                    // BUCKET_NAME = sh(returnStdout: true, script: '''
-                    //     terraform output bucket_name | tr -d '"'
-                    // ''')
+                    script {
+                        BUCKET_NAME = sh(returnStdout: true, script: '''
+                            terraform output bucket_name | tr -d '"'
+                        ''')
+                    }
                 }
             }
         }
@@ -64,7 +66,7 @@ pipeline {
         stage('Upload the static files to S3 bucket') {
             steps {
                 dir('${TF_DIR}/scripts') {
-                    sh './upload_files.sh "${terraform.bucket_name}"'
+                    sh './upload_files.sh "${BUCKET_NAME}"'
                 }
                 echo 'Files have been succesfully uploaded to S3 bucket'
             }
