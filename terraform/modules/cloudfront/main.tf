@@ -12,6 +12,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   enabled = var.enable_main_cloudfront ? true : false
+  is_ipv6_enabled = var.is_ipv6_enabled ? true : false
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
