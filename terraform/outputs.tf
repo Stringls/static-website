@@ -1,6 +1,6 @@
-output "bucket_regional_domain_name" {
+output "bucket_website_endpoint" {
   value       = module.bucket.bucket_website_endpoint
-  description = "S3 Bucket REGIONAL domain name"
+  description = "S3 Bucket website endpoint"
 }
 
 output "cloudfront_domain_name" {
