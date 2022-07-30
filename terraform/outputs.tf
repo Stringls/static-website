@@ -9,6 +9,6 @@ output "cloudfront_domain_name" {
 }
 
 output "bucket_name" {
-  value = module.bucket.bucket_name
+  value       = module.bucket.bucket_name
   description = "S3 Bucket name"
 }

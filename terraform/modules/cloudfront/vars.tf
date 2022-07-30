@@ -19,7 +19,7 @@ variable "enable_main_cloudfront" {
 }
 
 variable "is_ipv6_enabled" {
-  type = bool
+  type        = bool
   description = "Whether the IPv6 is enabled for the distribution"
 }
 
