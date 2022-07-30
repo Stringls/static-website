@@ -65,9 +65,7 @@ pipeline {
 
         stage('Upload the static files to S3 bucket') {
             steps {
-                dir('${TF_DIR}/scripts') {
-                    sh './upload_files.sh "${BUCKET_NAME}"'
-                }
+                sh './${TF_DIR}/scripts/upload_files.sh "${BUCKET_NAME}"'
                 echo 'Files have been succesfully uploaded to S3 bucket'
             }
         }
